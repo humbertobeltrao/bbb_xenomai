@@ -1,0 +1,16 @@
+{
+  firmwares: [
+    {
+      name: "V1",
+      url: ""
+    },
+    {
+      name: "V2",
+      url: ""
+    },
+    {
+      name: "V3",
+      url: ""
+    }
+  ]
+}
