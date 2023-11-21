@@ -1,5 +1,5 @@
 {
-  "firmwares" : [
+  "firmware" : [
     {
       "name": "V1",
       "url" : "https://github.com/humbertobeltrao/bbb_xenomai/blob/main/blink.ino.doitESP32devkitV1.bin"
