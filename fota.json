@@ -1,16 +1,16 @@
 {
   "firmwares" : [
     {
-      name: "V1",
-      url: "https://github.com/humbertobeltrao/bbb_xenomai/blob/main/blink.ino.doitESP32devkitV1.bin"
+      "name": "V1",
+      "url" : "https://github.com/humbertobeltrao/bbb_xenomai/blob/main/blink.ino.doitESP32devkitV1.bin"
     },
     {
-      name: "V2",
-      url: "https://github.com/humbertobeltrao/bbb_xenomai/blob/main/blink_three.ino.doitESP32devkitV1.bin"
+      "name": "V2",
+      "url" : "https://github.com/humbertobeltrao/bbb_xenomai/blob/main/blink_three.ino.doitESP32devkitV1.bin"
     },
     {
-      name: "V3",
-      url: "https://github.com/humbertobeltrao/bbb_xenomai/raw/main/blink_five.ino.doitESP32devkitV1.bin"
+      "name": "V3",
+      "url" : "https://github.com/humbertobeltrao/bbb_xenomai/raw/main/blink_five.ino.doitESP32devkitV1.bin"
     }
   ]
 }
