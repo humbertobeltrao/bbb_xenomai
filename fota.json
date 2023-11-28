@@ -2,11 +2,11 @@
   "firmware_versions" : [
     {
       "name": "V1",
-      "url" : "https://github.com/humbertobeltrao/bbb_xenomai/raw/main/blink.ino.doitESP32devkitV1.bin"
+      "url" : ""
     },
     {
       "name": "V2",
-      "url" : "https://github.com/humbertobeltrao/bbb_xenomai/raw/main/blink_five.ino.doitESP32devkitV1.bin"
+      "url" : ""
     }
   ]
 }
