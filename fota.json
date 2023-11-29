@@ -1,12 +1,16 @@
 {
   "firmware_versions" : [
     {
-      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version1.txt",
-      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_three.bin"
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version500.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_500.bin"
     },
     {
-      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version2.txt",
-      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_five.bin"
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version3000.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_3000.bin"
+    },
+    {
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version5000.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_5000.bin"
     }
   ]
 }
