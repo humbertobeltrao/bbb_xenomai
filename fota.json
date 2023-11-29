@@ -3,17 +3,17 @@
     {
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version500.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_500.bin",
-      "display_version": 1.0
+      "display_version": "1.0"
     },
     {
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version3000.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_3000.bin",
-      "display_version": 2.0
+      "display_version": "2.0"
     },
     {
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version5000.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_5000.bin",
-      "display_version": 3.0
+      "display_version": "3.0"
     }
   ]
 }
