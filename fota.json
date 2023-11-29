@@ -1,11 +1,11 @@
 {
   "firmware_versions" : [
     {
-      "name": "V1",
+      "version": "1.0",
       "url" : "https://raw.github.com/humbertobeltrao/bbb_xenomai/main/bins/fw_three_sec.bin"
     },
     {
-      "name": "V2",
+      "version": "2.0",
       "url" : "https://raw.github.com/humbertobeltrao/bbb_xenomai/main/bins/fw_five_sec.bin"
     }
   ]
