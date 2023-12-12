@@ -19,6 +19,21 @@
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version100.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_100.bin",
       "display_version": "v4.0"
+    },
+     {
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version-hello.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/hello_world.bin",
+      "display_version": "v5.0"
+    }
+     {
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version100.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_100.bin",
+      "display_version": "v6.0"
+    }
+     {
+      "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version100.txt",
+      "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/fw_100.bin",
+      "display_version": "v7.0"
     }
   ]
 }
