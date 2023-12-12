@@ -24,12 +24,12 @@
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-version-hello.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/hello_world.bin",
       "display_version": "v5.0"
-    }
+    },
      {
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-stats.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/real_time_stats.bin",
       "display_version": "v6.0"
-    }
+    },
      {
       "version": "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/versions/bin-i2c.txt",
       "url" : "https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/bins/i2c_example.bin",
