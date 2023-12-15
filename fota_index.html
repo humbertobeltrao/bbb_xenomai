@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmware Update Control</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+    <div class="jumbotron">
+        <h1 class="display-4">Firmware Update Control</h1>
+        <p class="lead">Select the firmware's version to be used</p>
+        
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="firmwareVersionSelect">Select version:</label>
+                <select class="form-control" id="firmwareVersionSelect" name="firmware_url" required>
+        
+
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Firmware</button>
+        </form>
+
+        <p id="resultMessage" class="mt-3"></p>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap components) -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+   <script>
+     firmware_versions = []
+     document.addEventListener('DOMContentLoaded', function () {
+            // Fetch values from the server and populate the dropdown
+            fetch('https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/fota.json') // server's endpoint to catch the firmwares
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.firmware_versions)
+                    firmware_versions = data.firmware_versions;
+                    // Populate the dropdown with fetched values
+                    var frequencySelect = document.getElementById('firmwareVersionSelect');
+                    /*data.pets.forEach(function (firmware_version) {
+                        var option = document.createElement('option');
+                        option.value = firmware_version;
+                        option.text = firmware_version;
+                        firmwareVersionSelect.appendChild(option);
+                    });*/
+                    data.firmware_versions.forEach(function (firmware) {
+                        var option = document.createElement('option');
+                        option.value = firmware.version;
+                        option.text = firmware.display_version;
+                        firmwareVersionSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching firmware versions:', error);
+            });
+    });
+    document.getElementById('updateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Get the selected frequency value from the dropdown
+        var selectedOption = document.getElementById('firmwareVersionSelect');
+        var newFirmwareVersion = selectedOption.options[selectedOption.selectedIndex].value;
+        //console.log(selectedOption)
+        console.log(firmware_versions[selectedOption.selectedIndex].display_version)
+
+        // Make a POST request to update the LED frequency
+        fetch('/update_firmware', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'firmware_url=' + firmware_versions[selectedOption.selectedIndex].url + '&firmware_version=' + firmware_versions[selectedOption.selectedIndex].version
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the result message
+            document.getElementById('resultMessage').innerText = 'Firmware version updated successfully. New version: ' + firmware_versions[selectedOption.selectedIndex].display_version;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('resultMessage').innerText = 'Failed to update firmware version';
+        });
+    });
+</script>
+
+
+</body>
+</html>

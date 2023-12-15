@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmware Update Control</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* Car silhouette */
+        .car {
+            position: relative;
+            width: 400px; /* Adjust car width as needed */
+            height: 200px; /* Adjust car height as needed */
+            background-color: #333; /* Car color */
+            border-radius: 10px; /* Rounded corners for car body */
+            margin: 20px auto; /* Center the car */
+        }
+
+        /* Roof of the car */
+        .roof {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px; /* Adjust roof width as needed */
+            height: 80px; /* Adjust roof height as needed */
+            background-color: #333; /* Roof color */
+            border-top-left-radius: 10px; /* Rounded corner for top-left of the roof */
+            border-top-right-radius: 10px; /* Rounded corner for top-right of the roof */
+        }
+
+        /* Add custom CSS for ESP32 rectangles */
+        .esp-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+        }
+
+        .esp {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px; /* Adjust rectangle width as needed */
+            height: 60px; /* Adjust rectangle height as needed */
+            margin: 0 10px; /* Adjust spacing between rectangles as needed */
+            background-color: #007bff; /* Default background color */
+            cursor: pointer;
+            color: #fff; /* Text color */
+        }
+
+        .esp.selected {
+            background-color: #ff8c00 !important; /* Orange background color for selected rectangle */
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body class="container mt-5">
+
+    <div class="jumbotron">
+        <h2 class="display-6"><b>FOTA-B3:</b> Firwmare Over-the-Air using BeagleBone Black</h2>
+        <p class="lead">Select ECUs to be updated and the firmware's version to be used</p>
+        
+        <!-- Car silhouette with ECU rectangles inside -->
+        <div class="car">
+            <div class="roof"></div>
+            <div class="esp-container">
+                <div class="esp" onclick="selectESP(0)">ECU 0</div>
+                <div class="esp" onclick="selectESP(1)">ECU 1</div>
+                <div class="esp" onclick="selectESP(2)">ECU 2</div>
+            </div>
+        </div>
+         <!-- Paragraph to display selected ECU text -->
+        <p id="selectedECUsText">ECUs to be updated: </p>
+        <div id="progress-container"></div>
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="firmwareVersionSelect">Select firmware's version:</label>
+                <select class="form-control" id="firmwareVersionSelect" name="firmware_url" required></select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Firmware</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ecuHealthModal">
+                Check ECU Health
+            </button>
+        </form>
+
+        <p id="resultMessage" class="mt-3"></p>
+
+        
+        <div id="status_msg"></div>
+        <div id="status_update"></div>
+
+       
+    </div>
+    
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap components) -->
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        selectedECUs = []
+        codes = []
+        // Function to handle ESP selection
+        function selectESP(index) {
+            // Toggle the selected state of the clicked rectangle
+            const clickedRectangle = document.querySelector('.esp-container').children[index];
+            clickedRectangle.classList.toggle('selected');
+            
+            // Update the paragraph with selected ECU text
+            selectedECUs = Array.from(document.querySelectorAll('.esp.selected')).map(rectangle => rectangle.innerText);
+            document.getElementById('selectedECUsText').innerText = "The following ECUs will be updated: " + selectedECUs.join(', ');
+
+
+            
+            // Implement the logic to handle ESP selection as needed
+            console.log('ESP selected:', selectedECUs);
+
+
+            // Function to update firmware
+        }
+
+        firmware_versions = []
+     document.addEventListener('DOMContentLoaded', function () {
+            // Fetch values from the server and populate the dropdown
+            fetch('https://raw.githubusercontent.com/humbertobeltrao/bbb_xenomai/main/fota.json') // server's endpoint to catch the firmwares
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.firmware_versions)
+                    firmware_versions = data.firmware_versions;
+                    // Populate the dropdown with fetched values
+                    var frequencySelect = document.getElementById('firmwareVersionSelect');
+                    /*data.pets.forEach(function (firmware_version) {
+                        var option = document.createElement('option');
+                        option.value = firmware_version;
+                        option.text = firmware_version;
+                        firmwareVersionSelect.appendChild(option);
+                    });*/
+                    data.firmware_versions.forEach(function (firmware) {
+                        var option = document.createElement('option');
+                        option.value = firmware.version;
+                        option.text = firmware.display_version;
+                        firmwareVersionSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching firmware versions:', error);
+            });
+    });
+    document.getElementById('updateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (selectedECUs.length === 0) {
+                // Show Bootstrap modal with an alert
+                $('#ecuAlertModal').modal('show');
+        } else {
+                var selectedOption = document.getElementById('firmwareVersionSelect');
+                var newFirmwareVersion = selectedOption.options[selectedOption.selectedIndex].value;
+        //console.log(selectedOption)
+                console.log(firmware_versions[selectedOption.selectedIndex].display_version)
+                document.getElementById('status_msg').innerHTML = "";
+                document.getElementById('status_update').innerHTML = "";
+        // Make a POST request to update the LED frequency
+                fetch('/update_firmware', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                        body: 'firmware_url=' + firmware_versions[selectedOption.selectedIndex].url + '&firmware_version=' + firmware_versions[selectedOption.selectedIndex].version + '&ecus=' + selectedECUs.join(',')
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    // Display the result message
+                    document.getElementById('resultMessage').innerText = 'Firmware version update sent successfully. New version will be: ' + firmware_versions[selectedOption.selectedIndex].display_version;
+
+                    })
+                    .catch(Error=> {
+                            console.error('Error:', error);
+                            document.getElementById('resultMessage').innerText = 'Failed to update firmware version';
+                });
+
+                $('#status_msg').html('FOTA process has started. The updates per ECU will be displayed on this area. Please wait...')
+          // Get the selected frequency value from the dropdown
+          devices = []
+          
+          count = 0;
+          let interval = setInterval(function() {
+           $.ajax({
+                type: 'GET',
+                cache: false,
+                url: '/get_status_update',
+                success: function(response) {
+                    // Display 'device' and 'status' in JavaScript
+                    console.log(response.code)
+                    if(response.size == 1) {
+                        if (!codes.includes(response.code)) {
+                            codes.push(response.code)
+                           //$('#status_update').html('')
+                           $('#status_update').append('<div>Device: ' + response.device + ', Status: ' + response.status + '</div>');
+                            document.getElementById('resultMessage').innerText = 'Firmware version update sent successfully. New version is: ' + firmware_versions[selectedOption.selectedIndex].display_version;
+                         
+                            if(codes.length > 0) {
+                                $('#status_msg').html('')
+                                clearInterval(interval)
+                                
+                            }
+                        }
+                    } else {
+                        
+                        if (!codes.includes(response.code)) {
+                            codes.push(response.code)
+                           //$('#status_update').html('')
+                           $('#status_update').append('<div>Device: ' + response.device + ', Status: ' + response.status + '</div>');
+                            document.getElementById('resultMessage').innerText = 'Firmware version update sent successfully. New version is: ' + firmware_versions[selectedOption.selectedIndex].display_version;
+                            count += 1
+                            if(count == response.size) {
+                                $('#status_msg').html('')
+                                clearInterval(interval)
+                                
+                            }
+                        }
+                    }
+
+                        
+                },
+                error: function(error) {
+                    console.log(error);
+                    // Handle the error if any
+                }
+            });
+       
+           }, 5000);
+                         
+        }
+    
+
+    });
+    
+
+     // Function to check ECU health
+    function checkECUHealth() {
+        // Get the selected ECU value
+        const selectedECU = document.getElementById('ecuSelect').value;
+        console.log(selectedECU)
+        var ecu_ip = ''
+        document.getElementById('ecuHealthInfo').innerHTML = '<i class="fa fa-spinner fa-spin"></i> Fetching health information...';
+        switch(selectedECU) {
+            case 'ECU 0': ecu_ip = 'http://172.22.76.153:8888/health'; break;
+            case 'ECU 1': ecu_ip = 'http://172.22.74.142:8888/health'; break;
+            case 'ECU 2': ecu_ip = 'http://172.22.74.205:8888/health'; break;
+        }
+        // Make a request to the server to get ECU health information
+
+      fetch(ecu_ip)  // Update the URL to match your ESP32 IP and port
+
+        .then(response => response.text())
+        .then(data => {
+            // Update the content of the ecuHealthInfo div with the retrieved health information
+          const healthInfo = `${data.replace(/\n/g, '<br>')}`;
+            document.getElementById('ecuHealthInfo').innerHTML = healthInfo;
+
+        })
+        .catch(error => {
+            console.error('Error fetching ECU health:', error);
+        });
+
+    }
+        
+    </script>
+    <!-- Modal for ECU alert -->
+    <div class="modal fade" id="ecuAlertModal" tabindex="-1" role="dialog" aria-labelledby="ecuAlertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ecuAlertModalLabel">ECU FOTA Control</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    At least one ECU must be selected.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for ECU health status -->
+
+    <div class="modal fade" id="ecuHealthModal" tabindex="-1" role="dialog" aria-labelledby="ecuHealthModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ecuHealthModalLabel">ECU Health Checking</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- List of ECUs for the user to select -->
+                <label for="ecuSelect">Select ECU:</label>
+                <select class="form-control" id="ecuSelect">
+                    <option value="ECU 0">ECU 0</option>
+                    <option value="ECU 1">ECU 1</option>
+                    <option value="ECU 2">ECU 2</option>
+                </select>
+                <!-- Display ECU health information here -->
+                <div id="ecuHealthInfo"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="checkECUHealth()">Check Health</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
